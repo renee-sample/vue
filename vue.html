@@ -1,0 +1,133 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <title>vue.js</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+	<meta name="format-detection" content="telephone=no">
+
+	<meta name="Author" content="Renee">
+
+	<meta name="description" content="Renee Vue.js Test">
+	<meta property="og:description" content="Renee Vue.js Test">
+	<meta property="og:type" content="website">
+    <meta property="og:title" content="Renee Vue.js Test">
+    
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+
+</head>
+<body>
+    <!--Wrap-->
+    <div id="wrap">
+        <!-- text/x-template : 템플릿을 정의하는 방법 -->
+        <script type="text/x-template" id="item-template">
+            <li>
+                <div
+                  :class="{bold: isFolder}"
+                  @click="toggle"
+                  @dblclick="changeType">
+                  {{model.name}}
+                  <span v-if="isFolder">[{{open ? '-' : '+'}}]</span>
+                </div>
+                <ul v-show="open" v-if="isFolder">
+                  <item
+                    class="item"
+                    v-for="model in model.children"
+                    :model="model">
+                  </item>
+                  <li class="add" @click="addChild">+</li>
+                </ul>
+              </li>
+
+        </script>
+
+    
+        <p>(You can double click on an item to turn it into a folder.)</p>
+
+        <ul id="demo">
+            <item class="item":model="treeData">
+        </ul>
+
+        <script>
+        // demo data
+        var data = {
+            name: 'GNB',
+            children: [
+                { name: 'g1' },
+                { name: 'g2' },
+                {
+                    name: 'g3',
+                    children: [
+                        {
+                            name: 'g3_sub1',
+                            children: [
+                                { name: 'g3_sub1_sub1' },
+                                { name: 'g3_sub1_sub2' }
+                            ]
+                        },
+                        { name: 'g3_sub2' },
+                        { name: 'g3_sub3' },
+                        {
+                            name: 'g3_sub4',
+                            children: [
+                                { name: 'g3_sub4_sub1' },
+                                { name: 'g3_sub4_sub2' }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+
+
+
+        // define the item component
+        Vue.component('item', {
+            template: '#item-template',
+            props: {
+                model: Object
+            },
+            data: function () {
+                return {
+                    open: false
+                }
+            },
+            computed: {
+                isFolder: function () {
+                return this.model.children &&
+                    this.model.children.length
+                }
+            },
+            methods: {
+                toggle: function () {
+                    if (this.isFolder) {
+                        this.open = !this.open
+                    }
+                },
+                changeType: function () {
+                    if (!this.isFolder) {
+                        Vue.set(this.model, 'children', [])
+                        this.addChild()
+                        this.open = true
+                    }
+                },
+                addChild: function () {
+                    this.model.children.push({
+                        name: 'new stuff'
+                    })
+                }
+            }
+        })
+        var demo = new Vue({
+            el : "#demo",
+            data : {
+                treeData : data
+            }
+        })
+        </script>
+    </div><!--END Wrap-->
+</body>
+</html>
+
